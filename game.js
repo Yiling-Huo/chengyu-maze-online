@@ -69,13 +69,14 @@ let selectedChengyu = [];
 let dif = '墨客模式';
 
 // select initial chengyu
-let currentChengyuIndex = Math.floor(Math.random() * 502);  // start from high frequency (-500 in rank)
+let currentChengyuIndex = Math.floor(Math.random() * 1000);  // start from high frequency (-1000 in rank)
 let difficultyIndex = 0;  // adaptive difficulty anchor
 
 let MIN_DIFFICULTY_STEP = Math.floor((chengyuList.length * 1.6)/(TOTAL_TRIALS*5));
-console.log(MIN_DIFFICULTY_STEP)
+// console.log(MIN_DIFFICULTY_STEP)
 let MAX_DIFFICULTY_STEP = Math.floor((chengyuList.length * 2)/(TOTAL_TRIALS-1));
-console.log(MAX_DIFFICULTY_STEP)
+// console.log(MAX_DIFFICULTY_STEP)
+let MINIMUM_DIFFICULTY = 727;
 // for the surprise easy trial mechanism
 const SURPRISE_THRESHOLD    = 2000;   // only allow surprise easy trial if last > 2000
 const SURPRISE_PROBABILITY  = 1 / 20; // 5% chance to trigger a surprise easy trial
@@ -235,6 +236,7 @@ function showWelcomeScreen() {
     // console.log(MIN_DIFFICULTY_STEP)
     MAX_DIFFICULTY_STEP = Math.floor((1200)/(TOTAL_TRIALS-1));
     // console.log(MAX_DIFFICULTY_STEP)
+    MINIMUM_DIFFICULTY = 0;
 
     // Start the first trial
     startNextTrial(null);
@@ -284,13 +286,17 @@ function pickNextChengyuIndex(wasCorrect) {
         const spanEnd   = Math.min(MAX_DIFFICULTY_STEP, maxIndex);
         difficultyIndex = getRandomUnusedIndex(selectedChengyu, spanStart, spanEnd);
       } else {
-        const min = Math.max(Math.floor(lastDiffIndex - (MAX_DIFFICULTY_STEP/2)), 0); // maximumly decrease by half of max increase difference
-        const max = Math.max(lastDiffIndex - 1, 0); // WHEN DECREASING DIFFICULTY, do not add a minimum step
+        const min = Math.max(Math.floor(lastDiffIndex - (MAX_DIFFICULTY_STEP/2)), MINIMUM_DIFFICULTY); // maximumly decrease by half of max increase difference
+        const max = Math.max(lastDiffIndex - 1, MINIMUM_DIFFICULTY); // WHEN DECREASING DIFFICULTY, do not add a minimum step
 
-        if (min <= max) {
-          difficultyIndex = randomInt(min, max);
+        if (min < max) {
+          if (max - min >= Math.floor(MIN_DIFFICULTY_STEP/2)) {
+            difficultyIndex = randomInt(min, max);
+          } else {
+            difficultyIndex = randomInt(min, max+MIN_DIFFICULTY_STEP); // make sure that if the player keeps selecting wrong, still can select from a wider range of words
+          }
         } else {
-          difficultyIndex = lastDiffIndex; // safety
+          difficultyIndex = randomInt(min, max+MIN_DIFFICULTY_STEP); // safety, to make sure always have something to choose from
         }
       }
     }
