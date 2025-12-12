@@ -71,8 +71,10 @@ let selectedChengyu = [];
 let currentChengyuIndex = Math.floor(Math.random() * 502);  // start from high frequency (-500 in rank)
 let difficultyIndex = 0;  // adaptive difficulty anchor
 
-const MIN_DIFFICULTY_STEP = (21000)/(TOTAL_TRIALS*5);
-const MAX_DIFFICULTY_STEP = (21000)/(TOTAL_TRIALS-1);
+const MIN_DIFFICULTY_STEP = Math.floor((21000)/(TOTAL_TRIALS*5));
+// console.log(MIN_DIFFICULTY_STEP)
+const MAX_DIFFICULTY_STEP = Math.floor((21000)/(TOTAL_TRIALS-1));
+// console.log(MAX_DIFFICULTY_STEP)
 // for the surprise easy trial mechanism
 const SURPRISE_THRESHOLD    = 2000;   // only allow surprise easy trial if last > 2000
 const SURPRISE_PROBABILITY  = 1 / 20; // 5% chance to trigger a surprise easy trial
@@ -130,6 +132,19 @@ function showWelcomeScreen() {
     '在两个选项当中选择能够组成成语的选项'
   ].join('\n');
 
+  const versionText = scene.add.text(
+    400,
+    550,
+    'version: 0.1.0',
+    {
+      fontFamily: fontStack,
+      fontSize: fs(15),
+      fill: '#0C6170',
+      align: 'center',
+      padding: { top: 2 }
+    }
+  ).setOrigin(0.5);
+
   const introText = scene.add.text(
     400,
     260,
@@ -171,6 +186,7 @@ function showWelcomeScreen() {
   startButton.on('pointerdown', () => {
     // Remove welcome screen elements
     titleText.destroy();
+    versionText.destroy();
     introText.destroy();
     startButton.destroy();
 
@@ -186,7 +202,7 @@ function showWelcomeScreen() {
 // This might belong to functions.js, but too much work to figure out global and local variables...
 function pickNextChengyuIndex(wasCorrect) {
   const lastShownIndex = currentChengyuIndex;      // what we just used
-  const maxIndex       = chengyuList.length - 1;
+  const maxIndex = chengyuList.length - 1;
 
   // First trial: just start from difficultyIndex / currentChengyuIndex as set above
   if (wasCorrect === null) {
