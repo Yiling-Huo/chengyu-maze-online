@@ -1,0 +1,21 @@
+@font-face {
+  font-family: "ZCOOL YuYang 3";
+  src: url("assets/zcool-yuyang-3.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+    --main-font: "ZCOOL YuYang 3", "SimSun", "Noto Serif SC", serif;
+}
+
+body {
+      margin: 0;
+      background: #DBF5F0;
+      color: #0C6170;
+      font-family: var(--main-font);
+    }
+canvas {
+    display: block;
+    margin: 0 auto;
+}
