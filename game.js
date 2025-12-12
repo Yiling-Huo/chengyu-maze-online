@@ -468,6 +468,7 @@ function clearOptions() {
 function endGame() {
     clearOptions();
     chengyuText.setText('');
+    eraseRestText();
     headerText.setText(`游戏结束！ ${dif}    得分：${correctCount}`);
     feedbackText.setText('');
 
