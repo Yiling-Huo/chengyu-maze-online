@@ -100,6 +100,12 @@ const chengyuText = this.add.text(300, 200, '', {
     fill: '#0C6170'
 }).setOrigin(0, 0.5);
 
+const restText = this.add.text(300, 200, '', {
+    fontFamily: fontStack,
+    fontSize: fs(32),
+    fill: '#83BDC0'
+}).setOrigin(0, 0.5);
+
 const feedbackText = this.add.text(450, 50, '', {
     fontFamily: fontStack,
     fontSize: fs(24),
@@ -138,7 +144,7 @@ function showWelcomeScreen() {
   const versionText = scene.add.text(
     400,
     550,
-    'version: 0.2.1',
+    'version: 0.2.2',
     {
       fontFamily: fontStack,
       fontSize: fs(15),
@@ -331,6 +337,7 @@ function startNextTrial(wasCorrect = null) {
 
   updateHeader();
   updateChengyuText();
+  eraseRestText();
   showOptions();
 }
 
@@ -339,8 +346,12 @@ function updateHeader() {
 }
 
 function updateChengyuText() {
-    const confirmedWords = currentChengyu.slice(0, currentLocation).join(' ');
-    chengyuText.setText(confirmedWords);
+    const confirmedChars = currentChengyu.slice(0, currentLocation).join(' ');
+    chengyuText.setText(confirmedChars);
+}
+
+function eraseRestText() {
+  restText.setText('');
 }
 
 function showOptions() {
@@ -431,6 +442,10 @@ function handleOptionClick(isCorrect) {
     }
     } else {
     feedbackText.setText('错误……');
+    restText.setText(currentChengyu.join(' ').slice(chengyuText.text.length));
+    restText.setPosition(
+        chengyuText.x + chengyuText.width,
+        restText.y);
     // Append current chengyu to history
     trialHistory.push({
         phrase: currentChengyu.join(''),
