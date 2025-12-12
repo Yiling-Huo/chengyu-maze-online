@@ -138,7 +138,7 @@ function showWelcomeScreen() {
   const versionText = scene.add.text(
     400,
     550,
-    'version: 0.2.0',
+    'version: 0.2.1',
     {
       fontFamily: fontStack,
       fontSize: fs(15),
