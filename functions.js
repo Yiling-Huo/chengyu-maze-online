@@ -54,7 +54,8 @@ function getOptions(chengyu, currentLocation, charRank, chengyuList, charRankInd
       : candidates[Math.floor(Math.random() * candidates.length)];
 
   // 4. Check if this candidate would create a real chengyu
-  const partial = chengyu.slice(0, currentLocation) + candidate;
+  const partial = chengyu.slice(0, currentLocation).join('') + candidate;
+  // console.log(partial);
 
   const found = chengyuList.some(c => c.includes(partial));
   // (same logic as: any(chengyu[:current_location]+candidate in c for c in chengyuList))
@@ -65,4 +66,24 @@ function getOptions(chengyu, currentLocation, charRank, chengyuList, charRankInd
   }
 
   return candidate;
+}
+
+function scaleHard(x) {
+  const inMin = 8000;
+  const inMax = 180000;
+  const outMin = 3.5;
+  const outMax = 5;
+
+  const t = Math.min(1, Math.max(0, (x - inMin) / (inMax - inMin)));
+  return outMin + t * (outMax - outMin);
+}
+
+function scaleEasy(x) {
+  const inMin = 0;
+  const inMax = 6000;
+  const outMin = 2;
+  const outMax = 4;
+
+  const t = Math.min(1, Math.max(0, (x - inMin) / (inMax - inMin)));
+  return outMin + t * (outMax - outMin);
 }

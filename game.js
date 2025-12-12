@@ -67,6 +67,7 @@ let acceptingInput = true;
 let trialHistory = [];
 let selectedChengyu = [];
 let dif = '墨客模式';
+let overallDifficulty = 0;
 
 // select initial chengyu
 let currentChengyuIndex = Math.floor(Math.random() * 1000);  // start from high frequency (-1000 in rank)
@@ -145,7 +146,7 @@ function showWelcomeScreen() {
   const versionText = scene.add.text(
     400,
     550,
-    'version: 0.2.3',
+    'version: 0.3.0',
     {
       fontFamily: fontStack,
       fontSize: fs(15),
@@ -270,10 +271,10 @@ function pickNextChengyuIndex(wasCorrect) {
         const min = Math.min(lastDiffIndex + MIN_DIFFICULTY_STEP, maxIndex);
         const max = Math.min(lastDiffIndex + MAX_DIFFICULTY_STEP, maxIndex);
 
-        if (min <= max) {
+        if (min < max) {
           difficultyIndex = randomInt(min, max);
         } else {
-          difficultyIndex = lastDiffIndex; // safety
+          difficultyIndex = randomInt(min-MIN_DIFFICULTY_STEP, max); // safety
         }
       }
 
@@ -318,7 +319,6 @@ function pickNextChengyuIndex(wasCorrect) {
     // Normal case: show chengyu at the current difficulty anchor
     currentChengyuIndex = difficultyIndex;
   }
-
   return currentChengyuIndex;
 }
 
@@ -337,6 +337,10 @@ function startNextTrial(wasCorrect = null) {
   // pick index based on difficulty
   const idx = pickNextChengyuIndex(wasCorrect);
   currentChengyu = chengyuList[idx];
+
+  // add to overall difficulty score
+  overallDifficulty += currentChengyuIndex;
+  // console.log(overallDifficulty);
 
   // Keep this so player (I) can cheat lol
   console.log("Current chengyu:", currentChengyu.join(''), "frequency rank: ", idx);
@@ -475,7 +479,12 @@ function endGame() {
     clearOptions();
     chengyuText.setText('');
     eraseRestText();
-    headerText.setText(`游戏结束！ ${dif}    得分：${correctCount}`);
+    if (dif === '市民模式') {
+      overallDifficulty = scaleEasy(overallDifficulty);
+    } else {
+      overallDifficulty = scaleHard(overallDifficulty);
+    }
+    headerText.setText(`游戏结束！ ${dif}    得分：${correctCount}    总体难度：${overallDifficulty.toFixed(1)}`);
     feedbackText.setText('');
 
     // Print summary
