@@ -11,11 +11,11 @@
 
 body {
       margin: 0;
-      background: #DBF5F0;
+      background: #fff;
       color: #0C6170;
       font-family: var(--main-font);
     }
 canvas {
-    display: block;
+    display: flex;
     margin: 0 auto;
 }

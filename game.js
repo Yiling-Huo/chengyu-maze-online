@@ -1,4 +1,4 @@
-const TOTAL_TRIALS = 20;
+const TOTAL_TRIALS = 10;
 
 // === Load materials ===
 // Function to pre-load the list of chengyu
@@ -71,29 +71,35 @@ let selectedChengyu = [];
 let currentChengyuIndex = Math.floor(Math.random() * 502);  // start from high frequency (-500 in rank)
 let difficultyIndex = 0;  // adaptive difficulty anchor
 
-const MIN_DIFFICULTY_STEP = 200;
-const MAX_DIFFICULTY_STEP = 1200;
+const MIN_DIFFICULTY_STEP = (21000)/(TOTAL_TRIALS*5);
+const MAX_DIFFICULTY_STEP = (21000)/(TOTAL_TRIALS-1);
 // for the surprise easy trial mechanism
 const SURPRISE_THRESHOLD    = 2000;   // only allow surprise easy trial if last > 2000
 const SURPRISE_PROBABILITY  = 1 / 20; // 5% chance to trigger a surprise easy trial
 const SURPRISE_EASY_MAX_RANK = 499;   // surprise easy trial = first 500 chengyu (0–499)
 
 // ==== UI ELEMENTS ====
+const isNarrow = window.innerWidth < 600;   // treat as phone
+const uiScale  = isNarrow ? 1.4 : 1.0;      // make text ~40% bigger on phones
+
+// helper to get scaled font sizes
+const fs = (base) => Math.round(base * uiScale);
+
 const headerText = this.add.text(20, 50, '', {
     fontFamily: fontStack,
-    fontSize: '24px',
+    fontSize: fs(24),
     fill: '#0C6170'
 });
 
 const chengyuText = this.add.text(300, 200, '', {
     fontFamily: fontStack,
-    fontSize: '32px',
+    fontSize: fs(32),
     fill: '#0C6170'
 }).setOrigin(0, 0.5);
 
-const feedbackText = this.add.text(400, 50, '', {
+const feedbackText = this.add.text(450, 50, '', {
     fontFamily: fontStack,
-    fontSize: '24px',
+    fontSize: fs(24),
     fill: '#0C6170'
 }).setOrigin(0, 0);
 
@@ -111,7 +117,7 @@ function showWelcomeScreen() {
     '欢迎来到成语迷宫！',
     {
       fontFamily: fontStack,
-      fontSize: '36px',
+      fontSize: fs(36),
       fill: '#0C6170',
       align: 'center',
       padding: { top: 8 }
@@ -130,7 +136,7 @@ function showWelcomeScreen() {
     instructions,
     {
       fontFamily: fontStack,
-      fontSize: '20px',
+      fontSize: fs(20),
       fill: '#0C6170',
       align: 'center',
       lineSpacing: 6,
@@ -141,7 +147,7 @@ function showWelcomeScreen() {
   // Start button (simple text button)
   const startStyle = {
     fontFamily: fontStack,
-    fontSize: '24px',
+    fontSize: fs(24),
     fill: '#FFFFFF',
     backgroundColor: '#37BEB0',
     padding: { x: 24, y: 12 }
@@ -273,7 +279,7 @@ function startNextTrial(wasCorrect = null) {
 }
 
 function updateHeader() {
-    headerText.setText(`成语 ${trialCount} / ${TOTAL_TRIALS}    当前得分： ${correctCount}`);
+    headerText.setText(`成语 ${trialCount} / ${TOTAL_TRIALS}   当前得分：${correctCount}`);
 }
 
 function updateChengyuText() {
@@ -300,7 +306,7 @@ function showOptions() {
 
     const style = {
     fontFamily: fontStack,
-    fontSize: '28px',
+    fontSize: fs(28),
     fill: '#fff',
     backgroundColor: '#37BEB0',
     padding: { x: 30, y: 15 }
@@ -391,7 +397,7 @@ function clearOptions() {
 function endGame() {
     clearOptions();
     chengyuText.setText('');
-    headerText.setText(`游戏结束！ 得分： ${correctCount}`);
+    headerText.setText(`游戏结束！ 得分：${correctCount}`);
     feedbackText.setText('');
 
     // Print summary
@@ -411,7 +417,7 @@ function endGame() {
         150,     // y
         leftCol,
         {
-            fontSize: '20px',
+            fontSize: fs(20),
             fill: '#0C6170',
             align: 'left',
             lineSpacing: 6,
@@ -425,7 +431,7 @@ function endGame() {
         150,
         rightCol,
         {
-            fontSize: '20px',
+            fontSize: fs(20),
             fill: '#0C6170',
             align: 'left',
             lineSpacing: 6,
@@ -435,9 +441,9 @@ function endGame() {
 
     scene.add.text(
     400,
-    475,
+    500,
     '刷新页面开始新一轮。',
-    { fontFamily: fontStack, fontSize: '24px', fill: '#0C6170' }
+    { fontFamily: fontStack, fontSize: fs(24), fill: '#0C6170' }
     ).setOrigin(0.5);
 }
 
