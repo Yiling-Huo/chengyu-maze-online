@@ -72,10 +72,10 @@ let dif = '墨客模式';
 let currentChengyuIndex = Math.floor(Math.random() * 502);  // start from high frequency (-500 in rank)
 let difficultyIndex = 0;  // adaptive difficulty anchor
 
-let MIN_DIFFICULTY_STEP = Math.floor((chengyuList.length + 1000)/(TOTAL_TRIALS*5));
-// console.log(MIN_DIFFICULTY_STEP)
-let MAX_DIFFICULTY_STEP = Math.floor((chengyuList.length + 1000)/(TOTAL_TRIALS-1));
-// console.log(MAX_DIFFICULTY_STEP)
+let MIN_DIFFICULTY_STEP = Math.floor((chengyuList.length * 1.6)/(TOTAL_TRIALS*5));
+console.log(MIN_DIFFICULTY_STEP)
+let MAX_DIFFICULTY_STEP = Math.floor((chengyuList.length * 2)/(TOTAL_TRIALS-1));
+console.log(MAX_DIFFICULTY_STEP)
 // for the surprise easy trial mechanism
 const SURPRISE_THRESHOLD    = 2000;   // only allow surprise easy trial if last > 2000
 const SURPRISE_PROBABILITY  = 1 / 20; // 5% chance to trigger a surprise easy trial
@@ -144,7 +144,7 @@ function showWelcomeScreen() {
   const versionText = scene.add.text(
     400,
     550,
-    'version: 0.2.2',
+    'version: 0.2.3',
     {
       fontFamily: fontStack,
       fontSize: fs(15),
@@ -276,7 +276,7 @@ function pickNextChengyuIndex(wasCorrect) {
       }
 
     } else {
-      // When player was wrong, decrease difficulty (increase frequency ranking)
+      // When player was wrong, decrease difficulty (increase frequency ranking) （but not by too far)
 
       if (lastDiffIndex <= 0) {
         // Already at easiest → random in an easy band near the start
@@ -284,7 +284,7 @@ function pickNextChengyuIndex(wasCorrect) {
         const spanEnd   = Math.min(MAX_DIFFICULTY_STEP, maxIndex);
         difficultyIndex = getRandomUnusedIndex(selectedChengyu, spanStart, spanEnd);
       } else {
-        const min = Math.max(lastDiffIndex - MAX_DIFFICULTY_STEP, 0);
+        const min = Math.max(Math.floor(lastDiffIndex - (MAX_DIFFICULTY_STEP/2)), 0); // maximumly decrease by half of max increase difference
         const max = Math.max(lastDiffIndex - 1, 0); // WHEN DECREASING DIFFICULTY, do not add a minimum step
 
         if (min <= max) {
