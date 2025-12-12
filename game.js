@@ -63,17 +63,18 @@ let currentLocation = 1;     // 1..3 (choosing word at this index)
 let optionButtons = [];
 let acceptingInput = true;
 
-// keep a record of all trials
+// keep a record of all trials and difficulty
 let trialHistory = [];
 let selectedChengyu = [];
+let dif = '墨客模式';
 
 // select initial chengyu
 let currentChengyuIndex = Math.floor(Math.random() * 502);  // start from high frequency (-500 in rank)
 let difficultyIndex = 0;  // adaptive difficulty anchor
 
-const MIN_DIFFICULTY_STEP = Math.floor((21000)/(TOTAL_TRIALS*5));
+let MIN_DIFFICULTY_STEP = Math.floor((chengyuList.length + 1000)/(TOTAL_TRIALS*5));
 // console.log(MIN_DIFFICULTY_STEP)
-const MAX_DIFFICULTY_STEP = Math.floor((21000)/(TOTAL_TRIALS-1));
+let MAX_DIFFICULTY_STEP = Math.floor((chengyuList.length + 1000)/(TOTAL_TRIALS-1));
 // console.log(MAX_DIFFICULTY_STEP)
 // for the surprise easy trial mechanism
 const SURPRISE_THRESHOLD    = 2000;   // only allow surprise easy trial if last > 2000
@@ -128,14 +129,16 @@ function showWelcomeScreen() {
 
   // Instructions
   const instructions = [
-    'Welcome to Chengyu Maze!',
-    '在两个选项当中选择能够组成成语的选项'
+    '',
+    '在两个选项当中选择能够组成成语的选项',
+    '',
+    '选择游戏难度'
   ].join('\n');
 
   const versionText = scene.add.text(
     400,
     550,
-    'version: 0.1.0',
+    'version: 0.2.0',
     {
       fontFamily: fontStack,
       fontSize: fs(15),
@@ -168,27 +171,64 @@ function showWelcomeScreen() {
     padding: { x: 24, y: 12 }
   };
 
-  const startButton = scene.add.text(
+  // Hard mode
+  const startButton1 = scene.add.text(
+    500,
     400,
-    400,
-    '开始游戏',
+    '墨客',
     startStyle
   ).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
-  startButton.on('pointerover', () => {
-    startButton.setStyle({ backgroundColor: '#83BDC0' });
+  startButton1.on('pointerover', () => {
+    startButton1.setStyle({ backgroundColor: '#83BDC0' });
   });
 
-  startButton.on('pointerout', () => {
-    startButton.setStyle({ backgroundColor: '#37BEB0' });
+  startButton1.on('pointerout', () => {
+    startButton1.setStyle({ backgroundColor: '#37BEB0' });
   });
 
-  startButton.on('pointerdown', () => {
+  startButton1.on('pointerdown', () => {
     // Remove welcome screen elements
     titleText.destroy();
     versionText.destroy();
     introText.destroy();
-    startButton.destroy();
+    startButton1.destroy();
+    startButton2.destroy();
+
+    // Start the first trial
+    startNextTrial(null);
+  });
+
+    const startButton2 = scene.add.text(
+    300,
+    400,
+    '市民',
+    startStyle
+  ).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+  startButton2.on('pointerover', () => {
+    startButton2.setStyle({ backgroundColor: '#83BDC0' });
+  });
+
+  startButton2.on('pointerout', () => {
+    startButton2.setStyle({ backgroundColor: '#37BEB0' });
+  });
+
+  startButton2.on('pointerdown', () => {
+    // Remove welcome screen elements
+    titleText.destroy();
+    versionText.destroy();
+    introText.destroy();
+    startButton1.destroy();
+    startButton2.destroy();
+
+    // Adjust difficulty
+    dif = '市民模式';
+    currentChengyuIndex = Math.floor(Math.random() * 200);  // start from high frequency (-200 in rank)
+    MIN_DIFFICULTY_STEP = Math.floor((1200)/(TOTAL_TRIALS*5));
+    // console.log(MIN_DIFFICULTY_STEP)
+    MAX_DIFFICULTY_STEP = Math.floor((1200)/(TOTAL_TRIALS-1));
+    // console.log(MAX_DIFFICULTY_STEP)
 
     // Start the first trial
     startNextTrial(null);
@@ -413,7 +453,7 @@ function clearOptions() {
 function endGame() {
     clearOptions();
     chengyuText.setText('');
-    headerText.setText(`游戏结束！ 得分：${correctCount}`);
+    headerText.setText(`游戏结束！ ${dif}    得分：${correctCount}`);
     feedbackText.setText('');
 
     // Print summary
