@@ -146,7 +146,7 @@ function showWelcomeScreen() {
   const versionText = scene.add.text(
     400,
     550,
-    'version: 0.3.0',
+    'version: 0.3.1',
     {
       fontFamily: fontStack,
       fontSize: fs(15),
@@ -491,7 +491,10 @@ function endGame() {
     const lines = trialHistory.map((t, i) => {
         const mark = t.success ? '✅' : '❌';
         // i+1 = trial number
-        return `${i + 1}. ${t.phrase}  ${mark}`;
+        // if trial number is single digit add a space
+        if (i + 1 < 10) {
+          return ` ${i + 1}. ${t.phrase}  ${mark}`;
+        } else {return `${i + 1}. ${t.phrase}  ${mark}`;}
     });
 
     // Split into two columns
